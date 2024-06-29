@@ -40,5 +40,5 @@ jobs:
         subject: Deployment Successful
         to: mutiuadeniyi5@gmail.com
         from: ${{ secrets.EMAIL_USERNAME }}
-        content_type: text/plain
+        
         body: The deployment of the NGINX HTML page was successful.
