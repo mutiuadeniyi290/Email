@@ -22,12 +22,19 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
+    - name: Generate random version number
+
+      id: random_version
+
+      run: echo "VERSION=$((100 + RANDOM % 900))" >> $GITHUB_ENV
+ 
+
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
       with:
         context: .
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/nginx-html:latest
+        tags: ${{ secrets.DOCKER_USERNAME }}/nginx-html:${{ env.VERSION }}
 
     - name: Send success email
       if: success()
@@ -37,11 +44,13 @@ jobs:
         server_port: 587
         username: ${{ secrets.EMAIL_USERNAME }}
         password: ${{ secrets.EMAIL_PASSWORD }}
-        subject: Deployment Successful
+
+        subject: Deployment Successful - Version ${{ env.VERSION }}
+
         to: mutiuadeniyi5@gmail.com
         from: ${{ secrets.EMAIL_USERNAME }}
 
-        body: The deployment of the NGINX HTML page was successful.
+        body: The deployment of the NGINX HTML page was successful. Version: ${{ env.VERSION }}
 
     - name: Send faiure email
       if: failure()
@@ -51,8 +60,8 @@ jobs:
           server_port: 587
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: Deployment Successful
+          subject: Deployment Successful - Version ${{ env.VERSION }}
           to: mutiuadeniyi5@gmail.com
           from: ${{ secrets.EMAIL_USERNAME }}
   
-          body: The deployment of the NGINX HTML page was failed.    
+          body: The deployment of the NGINX HTML page was successful. Version: ${{ env.VERSION }}
