@@ -23,7 +23,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Build and push Docker image
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action
       with:
         context: .
         push: true
@@ -42,3 +42,17 @@ jobs:
         from: ${{ secrets.EMAIL_USERNAME }}
 
         body: The deployment of the NGINX HTML page was successful.
+
+    - name: Send faiure email
+      if: failure()
+      uses: dawidd6/action-send-mail@v3
+      with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: Deployment Successful
+          to: mutiuadeniyi5@gmail.com
+          from: ${{ secrets.EMAIL_USERNAME }}
+  
+          body: The deployment of the NGINX HTML page was failed.    
