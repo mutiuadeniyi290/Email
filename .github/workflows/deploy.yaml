@@ -50,7 +50,7 @@ jobs:
         to: mutiuadeniyi5@gmail.com
         from: ${{ secrets.EMAIL_USERNAME }}
 
-        body:The deployment of the NGINX HTML page was successful. Version: ${{ env.VERSION }}
+        body: The deployment of the NGINX HTML page was successful. Version ${{ env.VERSION }}
 
     - name: Send faiure email
       if: failure()
@@ -64,4 +64,4 @@ jobs:
           to: mutiuadeniyi5@gmail.com
           from: ${{ secrets.EMAIL_USERNAME }}
   
-          body:The deployment of the NGINX HTML page was successful. Version: ${{ env.VERSION }}
+          body: The deployment of the NGINX HTML page was successful. Version ${{ env.VERSION }}
