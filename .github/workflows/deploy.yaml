@@ -44,6 +44,9 @@ jobs:
         name: version
         path: artifact
 
+    - name: Log artifact contents
+      run: cat artifact/version.txt
+
     - name: Read version number
       id: read_version
       run: echo "VERSION=$(cat artifact/version.txt)" >> $GITHUB_ENV
