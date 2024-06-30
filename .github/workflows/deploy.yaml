@@ -23,11 +23,27 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Generate random version number
-
       id: random_version
+      run: |
+        VERSION=$((100 + RANDOM % 900))
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+        echo $VERSION > version.txt
 
-      run: echo "VERSION=$((100 + RANDOM % 900))" >> $GITHUB_ENV
- 
+    - name: Upload version number artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: version
+        path: version.txt
+
+    - name: Download version number artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: version
+        path: version.txt
+
+    - name: Read version number
+      id: read_version
+      run: echo "VERSION=$(cat version.txt)" >> $GITHUB_ENV
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
@@ -44,24 +60,20 @@ jobs:
         server_port: 587
         username: ${{ secrets.EMAIL_USERNAME }}
         password: ${{ secrets.EMAIL_PASSWORD }}
-
         subject: Deployment Successful - Version ${{ env.VERSION }}
-
         to: mutiuadeniyi5@gmail.com
         from: ${{ secrets.EMAIL_USERNAME }}
-
         body: The deployment of the NGINX HTML page was successful. Version ${{ env.VERSION }}
 
-    - name: Send faiure email
+    - name: Send failure email
       if: failure()
       uses: dawidd6/action-send-mail@v3
       with:
-          server_address: smtp.gmail.com
-          server_port: 587
-          username: ${{ secrets.EMAIL_USERNAME }}
-          password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: Deployment Successful - Version ${{ env.VERSION }}
-          to: mutiuadeniyi5@gmail.com
-          from: ${{ secrets.EMAIL_USERNAME }}
-  
-          body: The deployment of the NGINX HTML page was successful. Version ${{ env.VERSION }}
+        server_address: smtp.gmail.com
+        server_port: 587
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        subject: Deployment Failed - Version ${{ env.VERSION }}
+        to: mutiuadeniyi5@gmail.com
+        from: ${{ secrets.EMAIL_USERNAME }}
+        body: The deployment of the NGINX HTML page failed. Version ${{ env.VERSION }}
